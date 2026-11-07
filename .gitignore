@@ -1,0 +1,24 @@
+.vs/
+x64/
+Debug/
+Release/
+build/
+out/
+*.obj
+*.pdb
+*.ilk
+*.exe
+*.dll
+*.wav
+*.mp4
+*.mp3
+*.mov
+*.mkv
+workspace/
+!legacy/
+
+# Visual Studio 个人配置
+*.vcxproj.user
+*.suo
+*.userosscache
+*.sln.docstates

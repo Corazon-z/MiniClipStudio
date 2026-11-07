@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AudioCapture/AudioCapture.vcxproj" Id="3e24a1b1-9bcf-48c5-978b-cf5175437b21" />
+</Solution>
