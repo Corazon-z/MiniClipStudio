@@ -2,14 +2,28 @@
 
 学习驱动的 Windows C++ / FFmpeg API 音视频处理系统。
 
+当前暂停增加功能，先按本地 `local-notes/从零学习教程.md` 从计算机/C++基础、VS操作到当前WAV实现顺序学习。三份学习资料已重写，旧版在本地历史归档；教程和归档均不上传GitHub。
+
+长期目标：逐步构建商用级音视频处理系统，同时理解并能解释每个阶段的实现原理。
+
+详细开发学习笔记保存在本机 `local-notes/MiniClipStudio开发笔记.md`，该目录不纳入 Git。公共里程碑见 `docs/LEARNING_ROADMAP.md`，实际进度见 `docs/PROGRESS.md`。
+
+C++语法与代码阅读另记于本机 `local-notes/C++学习笔记.md`；开发笔记侧重媒体原理与实现。两份本地笔记均不上传GitHub。
+
+VS初学操作指南：本地 `local-notes/VS编译与验证入门.md`；独立线程练习：`local-notes/examples/thread_basics.cpp`，同样不上传GitHub。
+
+完整目录、模块职责、依赖规则与分阶段迁移方案见 [架构规划](docs/ARCHITECTURE_PLAN.md)。该文档为待确认规划，目录按阶段落地，现有 VS 工程继续作为当前构建入口。
+
 ## 当前环境
 - Visual Studio 2026
-- FFmpeg 头文件、库和 DLL 已在既有 VS 项目中配置；具体版本和路径待检查
+- 已核实本机 FFmpeg SDK：`C:\ffmpeg-9.0.2-full_build-shared`；使用 x64，生成后部署 DLL 到输出目录
 - 尚未安装 Qt；初期保留 Win32 / CLI
 - C++ 基础语法已掌握，现代 C++、线程和音视频底层仍在学习
 
 ## 第一里程碑
 从既有 DirectShow 麦克风采集实验出发，实现可靠的 `录音 -> 解码(如需要) -> 重采样 -> PCM S16 -> WAV封装 -> 验证`。
+
+已接入设备选择、异步录制/停止、48kHz/S16/双声道 WAV 保存及确定性验证。使用、构建、教学解释和未验证项见 [录音说明](docs/RECORDING_GUIDE.md)。本机正常录音与程序化取消已测，设备异常和GUI完整流程仍需补充人工验收。
 
 ## 原则
 1. 核心媒体处理直接调用 FFmpeg C API，不用 FFmpeg CLI 代替实现。

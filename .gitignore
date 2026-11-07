@@ -22,3 +22,6 @@ workspace/
 *.suo
 *.userosscache
 *.sln.docstates
+
+# 本地开发学习笔记（不上传 GitHub）
+/local-notes/
