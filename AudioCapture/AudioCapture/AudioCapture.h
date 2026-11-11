@@ -1,21 +1,9 @@
-#pragma once
-#include <atomic>
-#include <cstdint>
-#include <string>
-#include <vector>
-struct AudioDevice { std::string name, description; };
-struct CaptureOptions {
-    std::string device, inputFile; // inputFile 非空时使用同一链路转换文件
-    std::wstring outputFile;
-    double durationSeconds = 0;
-};
-struct CaptureResult {
-    bool success = false, cancelled = false;
-    int64_t samples = 0; // 每声道样本数
-    std::string message;
-};
-std::vector<AudioDevice> ListAudioDevices();
-// 工作线程执行；调用期间 options 不变，cancel 与 progress 必须存活。
-CaptureResult RunAudioCapture(const CaptureOptions&, const std::atomic<bool>& cancel,
-    std::atomic<int64_t>& progress);
-CaptureResult WriteSyntheticAudio(const std::wstring& outputFile, bool stereo = false);
+﻿#pragma once
+// 兼容旧包含位置。真实接口已迁移；新模块直接包含src下对应头文件。
+#include "../../src/capture/audio/AudioRecorder.h"
+using miniclip::AudioDevice;
+using miniclip::CaptureOptions;
+using miniclip::CaptureResult;
+using miniclip::ListAudioDevices;
+using miniclip::RunAudioCapture;
+using miniclip::WriteSyntheticAudio;

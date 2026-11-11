@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <!-- 固定输出位置，根解决方案与原解决方案生成相同产品路径。 -->
+  <PropertyGroup><OutDir>$(MSBuildThisFileDirectory)..\x64\$(Configuration)\</OutDir></PropertyGroup>
+  <Import Project="..\..\build-config\vs\FFmpeg.props" />
   <!-- UTF-8 源文件；SDK 目录来自已核实的当前配置。 -->
   <ItemDefinitionGroup>
     <ClCompile>
@@ -117,12 +120,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\ffmpeg-9.0.2-full_build-shared\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FFmpegRoot)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\ffmpeg-9.0.2-full_build-shared\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FFmpegRoot)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
@@ -138,12 +141,12 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\ffmpeg-9.0.2-full_build-shared\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FFmpegRoot)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\ffmpeg-9.0.2-full_build-shared\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FFmpegRoot)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
@@ -151,11 +154,22 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AudioCapture.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\src\media\ffmpeg\FfmpegSupport.cpp" />
+    <ClCompile Include="..\..\src\media\mux\WavWriter.cpp" />
+    <ClCompile Include="..\..\src\capture\DeviceCatalog.cpp" />
+    <ClCompile Include="..\..\src\capture\audio\AudioRecorder.cpp" />
+    <ClCompile Include="..\..\apps\desktop\main.cpp" />
+    <ClCompile Include="..\..\apps\cli\AudioCommands.cpp" />
+    <ClCompile Include="..\..\src\application\RecordingController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioCapture.h" />
+    <ClInclude Include="..\..\src\media\ffmpeg\FfmpegSupport.h" />
+    <ClInclude Include="..\..\src\media\mux\WavWriter.h" />
+    <ClInclude Include="..\..\src\capture\DeviceCatalog.h" />
+    <ClInclude Include="..\..\src\capture\audio\AudioRecorder.h" />
+    <ClInclude Include="..\..\src\application\RecordingController.h" />
+    <ClInclude Include="..\..\apps\cli\AudioCommands.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="RequireX64FFmpeg" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'!='x64'">
@@ -163,7 +177,7 @@
   </Target>
   <Target Name="CopyFFmpegRuntime" AfterTargets="Build" Condition="'$(Platform)'=='x64'">
     <ItemGroup>
-      <FFmpegRuntime Include="C:\ffmpeg-9.0.2-full_build-shared\bin\*.dll" />
+      <FFmpegRuntime Include="$(FFmpegRoot)\bin\*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(FFmpegRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>

@@ -1,3 +1,5 @@
+> 2026-11-11更新：以下保留早期规划/实现说明作历史参考。当前实际目录、源文件位置和状态以MODULES.md、RECORDING_FLOW.md及本次worklog为准；不再只在旧AudioCapture.cpp/main.cpp开发。
+
 # WAV 录音使用与实现说明
 
 日期：2026-11-07。沿用现有 Win32 / VS 工程，原始 legacy 程序未改动。

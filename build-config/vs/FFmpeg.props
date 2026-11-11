@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildThisFileDirectory)FFmpeg.local.props" Condition="Exists('$(MSBuildThisFileDirectory)FFmpeg.local.props')" />
+  <PropertyGroup>
+    <FFmpegRoot Condition="'$(FFmpegRoot)'==''">C:\ffmpeg-9.0.2-full_build-shared</FFmpegRoot>
+  </PropertyGroup>
+  <Target Name="ValidateFFmpegSDK" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'=='x64'">
+    <Error Condition="!Exists('$(FFmpegRoot)\include\libavcodec\avcodec.h')" Text="Set FFmpegRoot to the checked x64 SDK path in FFmpeg.local.props." />
+  </Target>
+</Project>

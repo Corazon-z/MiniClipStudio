@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 复制为FFmpeg.local.props后填写本机实际x64 SDK根目录；该本机文件被Git忽略。 -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup><FFmpegRoot>C:\ffmpeg-9.0.2-full_build-shared</FFmpegRoot></PropertyGroup>
+</Project>

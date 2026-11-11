@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals"><ProjectGuid>{D57BA213-A21E-456F-9B82-B83AF4E92132}</ProjectGuid><WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion></PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration"><ConfigurationType>Application</ConfigurationType><PlatformToolset>v145</PlatformToolset><CharacterSet>Unicode</CharacterSet><UseDebugLibraries>false</UseDebugLibraries></PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="..\..\build-config\vs\FFmpeg.props" />
+  <PropertyGroup><OutDir>$(MSBuildThisFileDirectory)..\..\build\lifecycle\$(Configuration)\</OutDir><IntDir>$(MSBuildThisFileDirectory)..\..\build\lifecycle-obj\$(Configuration)\</IntDir></PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile><LanguageStandard>stdcpp20</LanguageStandard><WarningLevel>Level3</WarningLevel><AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions><AdditionalIncludeDirectories>$(FFmpegRoot)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>
+    <Link><SubSystem>Console</SubSystem><AdditionalLibraryDirectories>$(FFmpegRoot)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories><AdditionalDependencies>avcodec.lib;avdevice.lib;avformat.lib;avutil.lib;swresample.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="LifecycleTests.cpp" />
+    <ClCompile Include="..\..\src\media\ffmpeg\FfmpegSupport.cpp" />
+    <ClCompile Include="..\..\src\media\mux\WavWriter.cpp" />
+    <ClCompile Include="..\..\src\capture\DeviceCatalog.cpp" />
+    <ClCompile Include="..\..\src\capture\audio\AudioRecorder.cpp" />
+    <ClCompile Include="..\..\src\application\RecordingController.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="CopyRuntime" AfterTargets="Build"><ItemGroup><Runtime Include="$(FFmpegRoot)\bin\*.dll" /></ItemGroup><Copy SourceFiles="@(Runtime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" /></Target>
+</Project>
