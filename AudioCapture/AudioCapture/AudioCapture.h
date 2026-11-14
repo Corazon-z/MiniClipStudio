@@ -1,5 +1,7 @@
-﻿#pragma once
-// 兼容旧包含位置。真实接口已迁移；新模块直接包含src下对应头文件。
+﻿// 这个头文件保留S00早期录音代码的包含路径，把旧名称转接到现在的AudioRecorder接口。
+// 旧代码包含它后仍能调用RunAudioCapture等函数，真正的录音处理在src/capture/audio中。
+// 后续模块可以直接包含真实接口；这里的using只转接名称，不创建线程或处理声音。
+#pragma once
 #include "../../src/capture/audio/AudioRecorder.h"
 using miniclip::AudioDevice;
 using miniclip::CaptureOptions;

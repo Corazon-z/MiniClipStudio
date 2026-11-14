@@ -1,4 +1,6 @@
-# 新 ChatGPT 聊天交接说明
+﻿# 新 ChatGPT 聊天交接说明
+
+S06当前入口（2026-11-14）：当前已到S06基础摄像头/麦克风MP4，见[说明](CAMERA_CAPTURE.md)和[工作记录](worklogs/2026-11-14-s06-camera-capture.md)。两配置14组回归与本机短录通过，GUI/听感/长录待验收；先读取根AGENTS/README和本地六册。下方旧交接内容按其日期理解，不能把早期阶段状态当当前成果。
 
 请作为我的 C++ / FFmpeg 音视频开发学习导师，帮助我以项目驱动方式完成 MiniClip Studio。
 

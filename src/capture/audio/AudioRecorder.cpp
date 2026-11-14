@@ -1,13 +1,21 @@
-﻿// 设备/文件输入 → 解码 → WavWriter；媒体资源由调用线程局部拥有。
+﻿// 这个文件实现S00录音及音频转WAV实验。RecordingController在后台调用它服务窗口，
+// --record/--convert等CLI也复用这里：先打开输入、解码声音，再交WavWriter转换并保存。
+// 每次调用独占自己的媒体资源，与S03视频转码、S04向扬声器播放是不同的处理出口。
 #include "AudioRecorder.h"
 #include "../../media/ffmpeg/FfmpegSupport.h"
 #include "../../media/mux/WavWriter.h"
 namespace miniclip {
 namespace {
+// RunAudioCapture把它登记为输入中断回调，FFmpeg读取时可通过它查询cancel。
+// 它只读取借用的原子标志、告诉FFmpeg是否请求停止，不能强制打断任意驱动操作。
 int Interrupt(void* opaque) {
     return static_cast<const std::atomic<bool>*>(opaque)->load() ? 1 : 0;
 }
 }
+// RecordingController或CLI调用这里完成一次S00录音/转WAV。先打开输入、找到音轨并初始化解码器，
+// 再反复读取包、送解码器、取声音帧，交给WavWriter::Push；结束时排空尾部并Finish保存。
+// 停止请求通常是结束读取并保存已有内容，真正写完才报告成功；异常转成CaptureResult交上层显示。
+// 这些工作在调用线程内进行，输入/解码器/帧包/writer也归它独占；GUI只能并发改cancel、读progress。
 CaptureResult RunAudioCapture(const CaptureOptions& options,
     const std::atomic<bool>& cancel, std::atomic<int64_t>& progress) {
     CaptureResult result;
@@ -18,7 +26,7 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
         InputResources input;
         input.format = avformat_alloc_context();
         if (!input.format) throw std::bad_alloc();
-        // 设置辅助中断回调，opaque借用cancel地址；const_cast仅满足C接口的void*形状。
+        // opaque借用cancel到函数返回；const_cast仅适配C回调形状，不改变只读约定。
         input.format->interrupt_callback = {Interrupt, const_cast<std::atomic<bool>*>(&cancel)};
         // 同一处理链路兼容设备与文件实验；live为true时使用DirectShow，文件则自动识别输入格式。
         bool live = options.inputFile.empty();
@@ -29,7 +37,7 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
         // 目标设备缓冲为50ms；实际参数与退出延迟仍须在真实驱动上测量。
         if (live) Check(av_dict_set_int(&input.options, "audio_buffer_size", 50, 0), "Set device buffer");
         std::string url = live ? "audio=" + options.device : options.inputFile;
-        // &input.format可写回上下文，&input.options可写回未消费选项；失败按SDK约定清理上下文。
+        // 选好设备或文件路径后调用avformat_open_input，它会写回输入上下文及未消费的选项。
         Check(avformat_open_input(&input.format, url.c_str(), format, &input.options), "Open input");
         // 剩余选项表明输入没有接受它们，当前不悄悄忽略用户以为已生效的参数。
         if (av_dict_count(input.options)) throw std::runtime_error("Input did not accept device options");
@@ -37,7 +45,7 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
         if (!live) Check(avformat_find_stream_info(input.format, nullptr), "Read stream information");
         // 设备打开可能耗时，返回后再次检查，处理“启动过程中点击停止”的情况。
         if (cancel.load()) { result.cancelled = true; result.message = "Cancelled while opening input"; return result; }
-        // 寻找第一条音频流；-1表示尚未找到，避免默认把任意流都按音频解码。
+        // 输入打开后，先挑出第一条音轨，再按它的真实codec_id建立解码器，不能把任意包都视为PCM。
         int streamIndex = -1;
         for (unsigned i = 0; i < input.format->nb_streams; ++i)
             if (input.format->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) { streamIndex = static_cast<int>(i); break; }
@@ -50,18 +58,18 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
         if (!codec) throw std::runtime_error("Audio decoder unavailable");
         input.decoder = avcodec_alloc_context3(codec);
         if (!input.decoder) throw std::bad_alloc();
-        // 复制流参数到解码运行上下文，再open2初始化；参数描述不是解码器本身。
+        // avcodec_parameters_to_context复制描述，avcodec_open2才初始化可工作的解码器。
         Check(avcodec_parameters_to_context(input.decoder, parameters), "Set decoder parameters");
         Check(avcodec_open2(input.decoder, codec, nullptr), "Open decoder");
-        // 输出对象是worker局部所有者，异常时析构；先Open，后循环Push，最后Finish。
+        // 解码器准备好后再打开WavWriter；它拥有转换/编码/封装资源，后续先Push声音，最后Finish发布。
         WavWriter writer(options.outputFile);
         writer.Open();
         Packet packet = NewPacket();
         Frame frame = NewFrame();
-        // 局部lambda按引用捕获仍存活的上下文/帧/输出对象；在本函数内同步调用，不交到函数外。
+        // send每送完一个包会调用这个lambda，把解码器当前可给的帧全部取出，交writer.Push后更新进度。
+        // 一包不一定对应一帧，必须取到EAGAIN/EOF才停；帧处理完就unref，引用不会逃出本次调用。
         auto receive = [&]() {
             for (;;) {
-                // 一个包可能产出多帧，也可能暂时不产帧，因此循环取到EAGAIN/EOF为止。
                 int ret = avcodec_receive_frame(input.decoder, frame.get());
                 if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) return;
                 Check(ret, "Decode audio");
@@ -71,10 +79,10 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
                 av_frame_unref(frame.get());
             }
         };
-        // 发送包若遇EAGAIN，先推进接收端，再重试原包；成功后接收所有当前可用帧。
+        // 主循环和结尾排空都会通过这个lambda送包；解码器返回EAGAIN时，先receive取走结果再重送原包。
+        // 送入成功后继续receive，把本轮声音交给writer；不能直接跳过原包，否则会丢失内容。
         auto send = [&](const AVPacket* p) {
             int ret = avcodec_send_packet(input.decoder, p);
-            // 暂无包不是致命错误：短暂休眠避免空转，超过10秒无音频则报错。休眠不等于线程同步。
             if (ret == AVERROR(EAGAIN)) { receive(); ret = avcodec_send_packet(input.decoder, p); }
             Check(ret, "Send decoder packet");
             receive();
@@ -82,11 +90,13 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
         // steady_clock用于耗时/无数据超时，避免系统日历时间调整影响；音频时长另用样本数。
         auto started = std::chrono::steady_clock::now();
         auto lastData = started;
-        // 每轮先检查协作式取消；终止循环不等于文件已完成，后面还要排空与收尾。
+        // 每轮先检查停止和录音时限，再用av_read_frame取包，只将所选音轨交给send，处理后解除包引用。
+        // 设备暂时无数据就短等并检查超时；跳出读取循环还不等于WAV已经保存，后面仍须排空收尾。
         while (!cancel.load()) {
             if (live && options.durationSeconds > 0 &&
                 std::chrono::duration<double>(std::chrono::steady_clock::now() - started).count() >= options.durationSeconds) break;
             int ret = av_read_frame(input.format, packet.get());
+            // 设备暂时无包时短等；这与上面解码器要求推进接收端的EAGAIN不同。
             if (ret == AVERROR(EAGAIN)) {
                 if (live && std::chrono::steady_clock::now() - lastData > std::chrono::seconds(10))
                     throw std::runtime_error("No audio data for 10 seconds; check device");
@@ -101,7 +111,7 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
             if (packet->stream_index == streamIndex) { send(packet.get()); lastData = std::chrono::steady_clock::now(); }
             av_packet_unref(packet.get());
         }
-        // 停止输入后通知解码器结束并取完尾部帧，然后由writer继续排空转换和编码。
+        // 不再读取输入后，send(nullptr)取完解码尾部，writer.Finish再排转换/编码、补文件信息并发布。
         send(nullptr);
         writer.Finish();
         result.samples = writer.Samples();
@@ -119,7 +129,9 @@ CaptureResult RunAudioCapture(const CaptureOptions& options,
     }
     return result;
 }
-// 独立验证入口，不使用麦克风；生成已知float planar信号，通过真实WavWriter写出。
+// --synthetic命令和自动验证调用这里，不接麦克风也能检查S00的声音保存链路。
+// 它先Open写入器，分配44.1kHz的FLTP帧，填充100块、每块441样本后Push，最后Finish得到1秒WAV。
+// FLTP各声道分开存；双声道时左右分别为440/880Hz，用已知频率发现漏读平面、复制或交换声道。
 CaptureResult WriteSyntheticAudio(const std::wstring& outputFile, bool stereo) {
     CaptureResult result;
     try {

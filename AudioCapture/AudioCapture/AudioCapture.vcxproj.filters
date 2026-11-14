@@ -4,6 +4,7 @@
 <ItemGroup>
 <ClCompile Include="..\..\src\media\ffmpeg\FfmpegSupport.cpp"><Filter>源文件</Filter></ClCompile>
 <ClCompile Include="..\..\src\media\mux\WavWriter.cpp"><Filter>源文件</Filter></ClCompile>
+<ClCompile Include="..\..\src\media\probe\MediaProbe.cpp"><Filter>源文件</Filter></ClCompile>
 <ClCompile Include="..\..\src\capture\DeviceCatalog.cpp"><Filter>源文件</Filter></ClCompile>
 <ClCompile Include="..\..\src\capture\audio\AudioRecorder.cpp"><Filter>源文件</Filter></ClCompile>
 <ClCompile Include="..\..\apps\desktop\main.cpp"><Filter>源文件</Filter></ClCompile>
@@ -12,9 +13,67 @@
 <ClInclude Include="AudioCapture.h"><Filter>头文件</Filter></ClInclude>
 <ClInclude Include="..\..\src\media\ffmpeg\FfmpegSupport.h"><Filter>头文件</Filter></ClInclude>
 <ClInclude Include="..\..\src\media\mux\WavWriter.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\src\media\probe\MediaProbe.h"><Filter>头文件</Filter></ClInclude>
 <ClInclude Include="..\..\src\capture\DeviceCatalog.h"><Filter>头文件</Filter></ClInclude>
 <ClInclude Include="..\..\src\capture\audio\AudioRecorder.h"><Filter>头文件</Filter></ClInclude>
 <ClInclude Include="..\..\src\application\RecordingController.h"><Filter>头文件</Filter></ClInclude>
 <ClInclude Include="..\..\apps\cli\AudioCommands.h"><Filter>头文件</Filter></ClInclude>
+</ItemGroup>
+<ItemGroup>
+<ClCompile Include="..\..\src\media\video\VideoFrameExport.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\media\video\VideoFrameExport.h"><Filter>头文件</Filter></ClInclude>
+</ItemGroup>
+<ItemGroup>
+<ClCompile Include="..\..\src\export\Transcode.cpp"><Filter>源文件</Filter></ClCompile>
+<ClCompile Include="..\..\src\media\encode\TranscodeTrack.cpp"><Filter>源文件</Filter></ClCompile>
+<ClCompile Include="..\..\src\media\mux\Mp4Output.cpp"><Filter>源文件</Filter></ClCompile>
+<ClCompile Include="..\..\apps\cli\TranscodeCommands.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\export\Transcode.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\src\export\TranscodeTiming.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\src\media\encode\TranscodeTrack.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\src\media\mux\Mp4Output.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\apps\cli\TranscodeCommands.h"><Filter>头文件</Filter></ClInclude>
+</ItemGroup>
+<ItemGroup>
+<ClCompile Include="..\..\src\media\audio\AudioDecode.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\media\audio\AudioDecode.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\playback\AudioPlayer.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\playback\AudioPlayer.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\platform\windows\output\WasapiOutput.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\platform\windows\output\WasapiOutput.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\apps\cli\PlaybackCommands.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\apps\cli\PlaybackCommands.h"><Filter>头文件</Filter></ClInclude>
+</ItemGroup>
+<ItemGroup>
+<ClInclude Include="..\..\src\media\ffmpeg\PreviewInput.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\media\ffmpeg\PreviewInput.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\media\video\VideoPreview.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\media\video\VideoPreview.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\media\audio\AudioPreview.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\media\audio\AudioPreview.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\playback\PreviewTypes.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\src\playback\VideoPlayer.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\playback\VideoPlayer.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\platform\windows\output\VideoSurface.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\platform\windows\output\VideoSurface.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\apps\desktop\VideoPreviewWindow.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\apps\desktop\VideoPreviewWindow.cpp"><Filter>源文件</Filter></ClCompile>
+</ItemGroup>
+<ItemGroup>
+<ClInclude Include="..\..\src\platform\windows\capture\CameraCatalog.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\platform\windows\capture\CameraCatalog.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\capture\camera\CameraCapture.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\capture\camera\CameraCapture.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\src\capture\session\CameraSession.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\capture\session\CameraSession.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\apps\desktop\CameraWindow.h"><Filter>头文件</Filter></ClInclude>
+<ClInclude Include="..\..\apps\desktop\ConsoleStopSignal.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\apps\desktop\CameraWindow.cpp"><Filter>源文件</Filter></ClCompile>
+<ClInclude Include="..\..\apps\cli\CameraCommands.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\apps\cli\CameraCommands.cpp"><Filter>源文件</Filter></ClCompile>
+</ItemGroup>
+<ItemGroup>
+<ClInclude Include="..\..\src\platform\windows\capture\ScreenRegionSelector.h"><Filter>头文件</Filter></ClInclude>
+<ClCompile Include="..\..\src\platform\windows\capture\ScreenRegionSelector.cpp"><Filter>源文件</Filter></ClCompile>
 </ItemGroup>
 </Project>

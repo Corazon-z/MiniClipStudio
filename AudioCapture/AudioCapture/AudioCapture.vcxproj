@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -155,6 +155,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\media\ffmpeg\FfmpegSupport.cpp" />
+    <ClCompile Include="..\..\src\media\probe\MediaProbe.cpp" />
+    <ClCompile Include="..\..\src\media\video\VideoFrameExport.cpp" />
     <ClCompile Include="..\..\src\media\mux\WavWriter.cpp" />
     <ClCompile Include="..\..\src\capture\DeviceCatalog.cpp" />
     <ClCompile Include="..\..\src\capture\audio\AudioRecorder.cpp" />
@@ -164,12 +166,67 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioCapture.h" />
+    <ClInclude Include="..\..\src\media\probe\MediaProbe.h" />
+    <ClInclude Include="..\..\src\media\video\VideoFrameExport.h" />
     <ClInclude Include="..\..\src\media\ffmpeg\FfmpegSupport.h" />
     <ClInclude Include="..\..\src\media\mux\WavWriter.h" />
     <ClInclude Include="..\..\src\capture\DeviceCatalog.h" />
     <ClInclude Include="..\..\src\capture\audio\AudioRecorder.h" />
     <ClInclude Include="..\..\src\application\RecordingController.h" />
     <ClInclude Include="..\..\apps\cli\AudioCommands.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\export\Transcode.cpp" />
+    <ClCompile Include="..\..\src\media\encode\TranscodeTrack.cpp" />
+    <ClCompile Include="..\..\src\media\mux\Mp4Output.cpp" />
+    <ClCompile Include="..\..\apps\cli\TranscodeCommands.cpp" />
+    <ClInclude Include="..\..\src\export\Transcode.h" />
+    <ClInclude Include="..\..\src\export\TranscodeTiming.h" />
+    <ClInclude Include="..\..\src\media\encode\TranscodeTrack.h" />
+    <ClInclude Include="..\..\src\media\mux\Mp4Output.h" />
+    <ClInclude Include="..\..\apps\cli\TranscodeCommands.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\media\audio\AudioDecode.cpp" />
+    <ClInclude Include="..\..\src\media\audio\AudioDecode.h" />
+    <ClCompile Include="..\..\src\playback\AudioPlayer.cpp" />
+    <ClInclude Include="..\..\src\playback\AudioPlayer.h" />
+    <ClCompile Include="..\..\src\platform\windows\output\WasapiOutput.cpp" />
+    <ClInclude Include="..\..\src\platform\windows\output\WasapiOutput.h" />
+    <ClCompile Include="..\..\apps\cli\PlaybackCommands.cpp" />
+    <ClInclude Include="..\..\apps\cli\PlaybackCommands.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\media\ffmpeg\PreviewInput.h" />
+    <ClCompile Include="..\..\src\media\ffmpeg\PreviewInput.cpp" />
+    <ClInclude Include="..\..\src\media\video\VideoPreview.h" />
+    <ClCompile Include="..\..\src\media\video\VideoPreview.cpp" />
+    <ClInclude Include="..\..\src\media\audio\AudioPreview.h" />
+    <ClCompile Include="..\..\src\media\audio\AudioPreview.cpp" />
+    <ClInclude Include="..\..\src\playback\PreviewTypes.h" />
+    <ClInclude Include="..\..\src\playback\VideoPlayer.h" />
+    <ClCompile Include="..\..\src\playback\VideoPlayer.cpp" />
+    <ClInclude Include="..\..\src\platform\windows\output\VideoSurface.h" />
+    <ClCompile Include="..\..\src\platform\windows\output\VideoSurface.cpp" />
+    <ClInclude Include="..\..\apps\desktop\VideoPreviewWindow.h" />
+    <ClCompile Include="..\..\apps\desktop\VideoPreviewWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\platform\windows\capture\CameraCatalog.h" />
+    <ClCompile Include="..\..\src\platform\windows\capture\CameraCatalog.cpp" />
+    <ClInclude Include="..\..\src\capture\camera\CameraCapture.h" />
+    <ClCompile Include="..\..\src\capture\camera\CameraCapture.cpp" />
+    <ClInclude Include="..\..\src\capture\session\CameraSession.h" />
+    <ClCompile Include="..\..\src\capture\session\CameraSession.cpp" />
+    <ClInclude Include="..\..\apps\desktop\CameraWindow.h" />
+    <ClInclude Include="..\..\apps\desktop\ConsoleStopSignal.h" />
+    <ClCompile Include="..\..\apps\desktop\CameraWindow.cpp" />
+    <ClInclude Include="..\..\apps\cli\CameraCommands.h" />
+    <ClCompile Include="..\..\apps\cli\CameraCommands.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\platform\windows\capture\ScreenRegionSelector.h" />
+    <ClCompile Include="..\..\src\platform\windows\capture\ScreenRegionSelector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="RequireX64FFmpeg" BeforeTargets="PrepareForBuild" Condition="'$(Platform)'!='x64'">

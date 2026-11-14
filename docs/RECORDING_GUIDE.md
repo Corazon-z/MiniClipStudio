@@ -1,4 +1,6 @@
-> 2026-11-11更新：以下保留早期规划/实现说明作历史参考。当前实际目录、源文件位置和状态以MODULES.md、RECORDING_FLOW.md及本次worklog为准；不再只在旧AudioCapture.cpp/main.cpp开发。
+﻿> 2026-11-11更新：以下保留早期规划/实现说明作历史参考。当前实际目录、源文件位置和状态以MODULES.md、RECORDING_FLOW.md及本次worklog为准；不再只在旧AudioCapture.cpp/main.cpp开发。
+
+S06当前入口（2026-11-14）：基础摄像头预览/可选麦克风MP4已实现，见[摄像头说明](CAMERA_CAPTURE.md)。本篇原有功能仍按自己的范围使用；S06复用不表示它新增所有摄像头控制、HDR或设备恢复。当前学习优先读本地六册，历史段落按日期理解。
 
 # WAV 录音使用与实现说明
 

@@ -1,4 +1,4 @@
-> 2026-11-11更新：以下保留早期规划/实现说明作历史参考。当前实际目录、源文件位置和状态以MODULES.md、RECORDING_FLOW.md及本次worklog为准；不再只在旧AudioCapture.cpp/main.cpp开发。
+﻿> 2026-11-12更新：功能优先级以FEATURE_IMPLEMENTATION_ORDER.md的S00—S18为准。以下保留早期规划作历史参考；实际源码位置见MODULES.md和RECORDING_FLOW.md，不将历史“待确认/暂停/下一次任务”当作当前状态。
 
 # MiniClipStudio 目录与模块总体规划
 
@@ -215,3 +215,7 @@ VS的“筛选器”只是IDE展示分组，磁盘目录是真实位置；创建
 1. project、timeline与render各自负责什么？为什么项目文件不保存AVCodecContext指针？
 2. 预览与导出为什么应共享时间映射和效果语义？它们的调度有什么不同？
 3. 为什么建立一个capture目录不代表必须创建一个Capture类、一个DLL和一个线程？
+
+## S06落地状态（2026-11-14）
+
+规划中的camera/session/windows capture现已有基础实现，新增摄像头窗口和CLI；沿用FFmpeg dshow采集与原生COM能力查询，不迁移媒体框架。一个worker串行采集/编码、单图邮箱供GUI、公共采集时间保留两轨关系，停止输入后排空保存。详见[实际方案](CAMERA_CAPTURE.md)。本文其余未来设计不因S06而全部完成。

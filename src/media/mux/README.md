@@ -1,4 +1,4 @@
-# 容器输出
+﻿# 容器输出
 
 路径：`src/media/mux/`。整个仓库是产品，本目录是一个职责模块。
 
@@ -18,3 +18,9 @@
 - `WavWriter.cpp`：重采样、PCM编码、时间戳、WAV收尾、文件发布。
 
 这里只实现列出的基础能力；其余功能继续按阶段验收，不宣称完整商业质量。
+
+2026-11-13：S03基础CLI已落地，实际文件/所有权/调用顺序见docs/TRANSCODING.md与docs/MODULES.md；验证和性能边界见worklogs/2026-11-13-s03-transcode.md、PERFORMANCE_WORKFLOW.md。目录中其他占位说明不代表实现。
+
+## S06已实现范围（2026-11-14）
+
+S06复用Mp4Output的独占草稿与不覆盖发布；WAV与MP4临时文件契约仍分开。 具体使用、文件分工及验收边界见[摄像头说明](../../../docs/CAMERA_CAPTURE.md)。

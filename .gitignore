@@ -28,3 +28,14 @@ workspace/
 
 # 本机FFmpeg配置覆盖（路径/个人环境不上传）
 /build-config/vs/FFmpeg.local.props
+
+# Python运行缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 尚未完成的输出草稿
+*.part-*
+
+# 根目录的首帧导出测试图片
+/first-frame-*.png

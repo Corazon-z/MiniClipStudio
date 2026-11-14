@@ -1,4 +1,4 @@
-# 产品模块目录与状态
+﻿# 产品模块目录与状态
 
 2026-11-11。所有目录已落地，目录说明不等于功能实现。现有录音基础提取已完成；剩余目录保留职责说明，不生成空壳实现。
 
@@ -88,3 +88,46 @@ UI/apps → application → capture / playback / export；这些服务使用medi
 | `build-config/vs/FFmpeg.local.props.example` | 本机配置模板；复制出的.local.props被Git忽略 |
 | `tests/integration/LifecycleTests.cpp` | 不访问麦克风的状态/资源/线程验证 |
 | `tests/integration/LifecycleTests.vcxproj` | 独立测试工程，复用生产代码，无第二main冲突 |
+
+## 2026-11-12 S01
+
+MediaProbe.h/.cpp已实现本地容器及逐流参数探测、未知字段和报告排版。CLI --probe与GUI后台共用，具体说明见MEDIA_PROBE.md。该功能不做完整媒体解码/播放，S02尚未实施。
+
+## S02新增实际文件（2026-11-12）
+
+- src/media/video/VideoFrameExport.h/.cpp：同步解码、首帧RGB/PNG、全段计数与可靠发布，不是播放器或整视频转码。
+- tests/integration/VideoFixtures.h/.cpp：测试专用MPEG4延迟输入；tests/verify_video.py：真实PNG像素、帧数、错误与清理验证。
+- 产品/测试vcxproj登记源码，测试链接swscale；无GUI按钮变更。使用与所有权见VIDEO_FRAME_EXPORT.md。
+
+## S03实际文件（2026-11-13）
+
+- src/export/Transcode.h/.cpp与TranscodeTiming.h：同步导出编排、自有参数/进度/指标、计时。
+- src/media/encode/TranscodeTrack.h/.cpp：每轨解码/过滤/编码、时间基与排空；src/media/mux/Mp4Output.h/.cpp：独占文件与AVIO、写尾及可靠发布。
+- apps/cli/TranscodeCommands.h/.cpp：--export、参数、Ctrl+C与报告；现有录音/探测UI不迁移。
+- tests/integration/TranscodeTests.h/.cpp、tests/verify_export.py、tools/benchmark_export.py：已知输入、独立输出重读、取消/错误与重复测量。
+- 测试工程新增avfilter链接；产品本来已链接avfilter。所有新头/cpp加入VS项目/筛选器（测试头加入测试工程）。范围见TRANSCODING.md，不等于S04播放器、GPU或云服务完成。
+
+## S04实际文件（2026-11-13）
+
+- src/media/audio/AudioDecode.h/.cpp：本地第一音轨解码、真实格式检查、float48k双声道转换、1024帧块与排空。
+- src/platform/windows/output/WasapiOutput.h/.cpp：消费线程内的COM、默认WASAPI共享输出、padding/空闲容量、增益、事件与RAII。
+- src/playback/AudioPlayer.h/.cpp：两线程会话、8块有限队列、互斥/条件变量、暂停/继续/停止与退出回收。
+- apps/cli/PlaybackCommands.h/.cpp：--play、音量、P/Q与Ctrl+C；apps/desktop/main.cpp新增播放控件及异步关窗。
+- tests/integration/PlaybackTests.h/.cpp与tests/verify_playback.py：PCM数值和真实输出设备静音验证。产品/测试工程登记源码，ole32通过pragma链接，无SDK/Qt/构建迁移。
+- 运行与逐函数职责见[AUDIO_PLAYBACK.md](AUDIO_PLAYBACK.md)。录音和播放的线程控制不同，暂保留两套清晰的小会话，不为了统一名称做大重构。
+
+## S05实际文件（2026-11-14）
+
+PreviewTypes定义带时间/代次的数据；PreviewInput封装每线程独立输入与seek；VideoPreview/AudioPreview分别解码BGRA和定时PCM；VideoPlayer协调3条后台执行路线、3帧/8块队列、主时钟和邮箱。VideoSurface用GDI呈现，VideoPreviewWindow接窗口交互。WasapiOutput增量提供Clock/Reset，S04路径保留。
+
+测试新增PreviewFixtures、PreviewClockTests、VideoSurfaceTests、VideoPlaybackTests与verify_preview.py。具体函数/所有权和调用图见[视频预览](VIDEO_PREVIEW.md)，不把下一步倍速、硬件解码、设备热恢复写成已完成。
+
+## S06实际模块（2026-11-14）
+
+CameraCatalog负责DirectShow设备/实际模式；CameraCapture同步组织同图采集、公共PTS与可选MP4；CameraSession拥有后台任务和单图邮箱；CameraWindow与CameraCommands提供窗口/CLI。复用TranscodeTrack/Mp4Output/VideoSurface，观察者默认空，旧S03调用保留。
+
+新增src/capture/camera、session及platform/windows/capture真实代码，不再是纯README规划。屏幕、工程模型、时间轴与AI仍未实现。资源/函数/线程图和测试见[摄像头说明](CAMERA_CAPTURE.md)。
+
+## 本次显示与区域模块（2026-11-14）
+
+VideoSurface新增BufferedVideoSurface/ClearAroundPreview，窗口拥有后台DC/DIB；S05与录制窗口复用。ScreenRegionSelector负责物理选区/规范化/DPI，CameraCapture的screenRegion分支使用gdigrab；入口与会话继续复用，不增加空壳录制类。ScreenCaptureTests/verify_screen验证纯坐标与自有窗口的真实捕获，S07仅基础无声区域分支。

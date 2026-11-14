@@ -1,5 +1,7 @@
 # 媒体探测
 
+2026-11-12已实现：MediaProbe.h保存文件/轨道报告及接口，MediaProbe.cpp读取本地媒体参数、处理未知值与取消并格式化输出；不执行全程播放/转码。GUI和CLI复用同一接口，详见docs/MEDIA_PROBE.md。
+
 路径：`src/media/probe/`。整个仓库是产品，本目录是一个职责模块。
 
 ## 职责
